@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -267,6 +268,25 @@ func ExampleClientConfig_clientWithProxy() {
 			// etc...
 		},
 	)
+}
+
+func ExampleClientConfig_clientWithCustomConfig() {
+	cfg := openai.DefaultCustomOpenAiConfig(os.Getenv("OPENAI_API_BASE_URL"), os.Getenv("OPENAI_API_KEY"))
+	client := openai.NewClientWithConfig(cfg)
+
+	resp, err := client.CreateChatCompletion( //nolint:errcheck // outside of the scope of this example.
+		context.Background(),
+		openai.ChatCompletionRequest{
+			// etc...
+		},
+	)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	b, _ := json.Marshal(resp)
+	fmt.Println(string(b))
 }
 
 func Example_chatbot() {
